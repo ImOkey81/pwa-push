@@ -1,0 +1,14 @@
+{
+  "name": "pwa-push-mvp",
+  "version": "1.0.0",
+  "description": "Minimal PWA push notifications MVP",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "web-push": "^3.6.7"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "PWA Push MVP",
+  "short_name": "PushMVP",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#0b57d0",
+  "icons": []
+}
