@@ -71,9 +71,20 @@ async function subscribe() {
 
     const registration = await navigator.serviceWorker.register('/service-worker.js');
 
+    // Получаем текущий VAPID ключ с сервера
+    const vapidPublicKey = await fetchVapidPublicKey();
+    
+    // Проверяем существующую подписку
     let subscription = await registration.pushManager.getSubscription();
+    
+    // Если подписка существует, отписываемся от неё (она могла быть создана со старыми ключами)
+    if (subscription) {
+      await subscription.unsubscribe();
+      subscription = null;
+    }
+    
+    // Создаём новую подписку с актуальным VAPID ключом
     if (!subscription) {
-      const vapidPublicKey = await fetchVapidPublicKey();
       subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: base64ToUint8Array(vapidPublicKey),
