@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0b57d0">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <title>PWA Push MVP</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main>
+    <h1>PWA Push MVP</h1>
+    <p>Нажмите кнопку, чтобы подписаться на push-уведомления.</p>
+    <button id="subscribeButton">Подписаться на push</button>
+    <p id="status">Статус: не подписан</p>
+
+    <section>
+      <h2>Проверка API</h2>
+      <ul>
+        <li id="swSupport"></li>
+        <li id="pushSupport"></li>
+        <li id="notifSupport"></li>
+      </ul>
+    </section>
+  </main>
+
+  <script src="/app.js" defer></script>
+</body>
+</html>
