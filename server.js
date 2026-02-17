@@ -1,11 +1,13 @@
 require('dotenv').config();
 
 const express = require('express');
+const os = require('os');
 const path = require('path');
 const webpush = require('web-push');
 
 const app = express();
 const port = process.env.PORT || 3000;
+const host = process.env.HOST || '0.0.0.0';
 const adminToken = process.env.ADMIN_TOKEN || 'changeme-admin-token';
 
 const vapidPublicKey = process.env.VAPID_PUBLIC_KEY;
@@ -200,6 +202,28 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+function getLanAddress() {
+  const interfaces = os.networkInterfaces();
+
+  for (const iface of Object.values(interfaces)) {
+    if (!iface) continue;
+    for (const details of iface) {
+      if (details.family === 'IPv4' && !details.internal) {
+        return details.address;
+      }
+    }
+  }
+
+  return null;
+}
+
+app.listen(port, host, () => {
+  const localUrl = `http://localhost:${port}`;
+  const lanAddress = getLanAddress();
+  const lanUrl = lanAddress ? `http://${lanAddress}:${port}` : null;
+
+  console.log(`Server is running on ${localUrl}`);
+  if (host === '0.0.0.0' && lanUrl) {
+    console.log(`LAN URL: ${lanUrl}`);
+  }
 });
