@@ -26,27 +26,6 @@ function base64ToUint8Array(base64String) {
   return outputArray;
 }
 
-function uint8ArrayToBase64Url(uint8Array) {
-  const bytes = new Uint8Array(uint8Array);
-  let binary = '';
-  for (let i = 0; i < bytes.byteLength; i += 1) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-
-  return btoa(binary)
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/g, '');
-}
-
-function subscriptionMatchesVapidKey(subscription, vapidPublicKey) {
-  if (!subscription || !subscription.options || !subscription.options.applicationServerKey) {
-    return false;
-  }
-
-  return uint8ArrayToBase64Url(subscription.options.applicationServerKey) === vapidPublicKey;
-}
-
 async function fetchVapidPublicKey() {
   const response = await fetch('/api/public/vapid-public-key');
   if (!response.ok) {
@@ -91,19 +70,13 @@ async function subscribe() {
     }
 
     const registration = await navigator.serviceWorker.register('/service-worker.js');
-    const vapidPublicKey = await fetchVapidPublicKey();
-    const vapidServerKey = base64ToUint8Array(vapidPublicKey);
 
     let subscription = await registration.pushManager.getSubscription();
-    if (subscription && !subscriptionMatchesVapidKey(subscription, vapidPublicKey)) {
-      await subscription.unsubscribe();
-      subscription = null;
-    }
-
     if (!subscription) {
+      const vapidPublicKey = await fetchVapidPublicKey();
       subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: vapidServerKey,
+        applicationServerKey: base64ToUint8Array(vapidPublicKey),
       });
     }
 
